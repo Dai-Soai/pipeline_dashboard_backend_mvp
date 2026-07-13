@@ -1,6 +1,11 @@
 """Pipeline Dashboard Backend MVP."""
 
 from pipeline_dashboard_backend._version import __version__
+from pipeline_dashboard_backend.aggregation import (
+    AggregationError,
+    AggregationResult,
+    DashboardAggregationEngine,
+)
 from pipeline_dashboard_backend.artifact_loader import (
     ArtifactLoadResult,
     LoadedArtifact,
@@ -27,9 +32,12 @@ from pipeline_dashboard_backend.exceptions import (
 
 __all__ = [
     "__version__",
+    "AggregationError",
+    "AggregationResult",
     "ArtifactLoadError",
     "ArtifactLoadResult",
     "ArtifactValidationError",
+    "DashboardAggregationEngine",
     "DashboardBackendError",
     "DashboardMetric",
     "DashboardPanel",

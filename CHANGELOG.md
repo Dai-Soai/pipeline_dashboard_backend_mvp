@@ -16,3 +16,10 @@ All notable changes to this project will be documented in this file.
 - SHA256 checksum, timestamp extraction, and source metadata.
 - Batch artifact loading with optional failure isolation.
 - Dashboard backend exception hierarchy.
+- Dashboard aggregation engine.
+- Source-specific dashboard panel generation.
+- Numeric metric extraction from summaries and metric records.
+- Dashboard status normalization and severity resolution.
+- Runtime observability overview panel.
+- Deterministic dashboard snapshot identifiers.
+- Aggregation warnings and invalid metric isolation.
