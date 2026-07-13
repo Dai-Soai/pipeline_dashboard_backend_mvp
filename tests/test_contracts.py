@@ -14,7 +14,6 @@ from pipeline_dashboard_backend import (
     DashboardStatus,
 )
 
-
 NOW = datetime(2026, 7, 13, 8, 0, tzinfo=UTC)
 
 

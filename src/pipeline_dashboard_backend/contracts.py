@@ -8,7 +8,6 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any, TypeAlias
 
-
 JsonScalar: TypeAlias = str | int | float | bool | None
 JsonValue: TypeAlias = JsonScalar | list["JsonValue"] | dict[str, "JsonValue"]
 
