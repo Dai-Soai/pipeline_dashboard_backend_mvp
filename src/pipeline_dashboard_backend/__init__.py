@@ -6,6 +6,11 @@ from pipeline_dashboard_backend.aggregation import (
     AggregationResult,
     DashboardAggregationEngine,
 )
+from pipeline_dashboard_backend.api import (
+    DashboardApiBuildRequest,
+    DashboardApiState,
+    create_app,
+)
 from pipeline_dashboard_backend.artifact_loader import (
     ArtifactLoadResult,
     LoadedArtifact,
@@ -78,4 +83,7 @@ __all__ = [
     "PanelNotFoundError",
     "SourceNotFoundError",
     "UnsupportedArtifactError",
+    "DashboardApiBuildRequest",
+    "DashboardApiState",
+    "create_app",
 ]

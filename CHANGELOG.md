@@ -38,3 +38,11 @@ All notable changes to this project will be documented in this file.
 - Runtime observability overview panel.
 - Deterministic dashboard snapshot identifiers.
 - Aggregation warnings and invalid metric isolation.
+- FastAPI dashboard service.
+- Thread-safe in-memory dashboard state.
+- Dashboard build HTTP endpoint.
+- Latest dashboard and snapshot endpoints.
+- Panel listing and lookup endpoints.
+- Metric search and lookup endpoints.
+- Dashboard query summary endpoint.
+- Health, service information, and OpenAPI endpoints.
