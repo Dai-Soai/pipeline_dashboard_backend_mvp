@@ -11,6 +11,12 @@ from pipeline_dashboard_backend.artifact_loader import (
     LoadedArtifact,
     ObservabilityArtifactLoader,
 )
+from pipeline_dashboard_backend.builder import (
+    DashboardBuildError,
+    DashboardBuildRequest,
+    DashboardBuildResult,
+    DashboardSnapshotBuilder,
+)
 from pipeline_dashboard_backend.contracts import (
     DashboardMetric,
     DashboardPanel,
@@ -48,6 +54,9 @@ __all__ = [
     "ArtifactValidationError",
     "DashboardAggregationEngine",
     "DashboardBackendError",
+    "DashboardBuildError",
+    "DashboardBuildRequest",
+    "DashboardBuildResult",
     "DashboardMetric",
     "DashboardPanel",
     "DashboardPanelType",
@@ -56,6 +65,7 @@ __all__ = [
     "DashboardQuerySummary",
     "DashboardReport",
     "DashboardSnapshot",
+    "DashboardSnapshotBuilder",
     "DashboardSource",
     "DashboardSourceType",
     "DashboardStatus",

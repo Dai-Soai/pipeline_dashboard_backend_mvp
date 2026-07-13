@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- High-level dashboard snapshot builder.
+- Dashboard build request and result contracts.
+- End-to-end artifact loading and aggregation workflow.
+- Partial artifact failure isolation.
+- Required source type validation.
+- Empty dashboard report generation.
+- Build warning and error deduplication.
+
 - Read-only dashboard query service.
 - Panel and source lookup by stable identifiers.
 - Panel filtering by type and normalized status.
