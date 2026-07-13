@@ -29,6 +29,15 @@ from pipeline_dashboard_backend.exceptions import (
     DashboardBackendError,
     UnsupportedArtifactError,
 )
+from pipeline_dashboard_backend.query import (
+    DashboardQueryError,
+    DashboardQueryService,
+    DashboardQuerySummary,
+    MetricMatch,
+    MetricNotFoundError,
+    PanelNotFoundError,
+    SourceNotFoundError,
+)
 
 __all__ = [
     "__version__",
@@ -42,6 +51,9 @@ __all__ = [
     "DashboardMetric",
     "DashboardPanel",
     "DashboardPanelType",
+    "DashboardQueryError",
+    "DashboardQueryService",
+    "DashboardQuerySummary",
     "DashboardReport",
     "DashboardSnapshot",
     "DashboardSource",
@@ -50,6 +62,10 @@ __all__ = [
     "JsonScalar",
     "JsonValue",
     "LoadedArtifact",
+    "MetricMatch",
+    "MetricNotFoundError",
     "ObservabilityArtifactLoader",
+    "PanelNotFoundError",
+    "SourceNotFoundError",
     "UnsupportedArtifactError",
 ]

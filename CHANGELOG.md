@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Read-only dashboard query service.
+- Panel and source lookup by stable identifiers.
+- Panel filtering by type and normalized status.
+- Exact and partial dashboard metric search.
+- Metric filtering by panel, unit, numeric range, and labels.
+- Ambiguous metric detection.
+- Dashboard query summary and panel distribution counts.
 - Initial project structure and packaging configuration.
 - Dashboard source, metric, panel, snapshot, and report contracts.
 - Normalized dashboard status and source type enumerations.
