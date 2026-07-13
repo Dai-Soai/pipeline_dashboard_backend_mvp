@@ -1,0 +1,9 @@
+{
+  "report_type": "metrics",
+  "generated_at": "2026-07-13T18:00:00+00:00",
+  "status": "healthy",
+  "summary": {
+    "pipeline_count": 12,
+    "success_rate": 99.0
+  }
+}

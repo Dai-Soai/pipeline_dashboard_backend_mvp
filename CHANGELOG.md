@@ -46,3 +46,11 @@ All notable changes to this project will be documented in this file.
 - Metric search and lookup endpoints.
 - Dashboard query summary endpoint.
 - Health, service information, and OpenAPI endpoints.
+- Dashboard command-line interface.
+- Build, inspect, validate, serve, and version commands.
+- Physical JSON dashboard report artifacts.
+- Canonical payload SHA256 integrity metadata.
+- Artifact overwrite protection.
+- Dashboard report inspection and validation.
+- Tampered payload detection.
+- Installed console script entrypoint.

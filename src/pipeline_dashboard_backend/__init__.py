@@ -49,6 +49,15 @@ from pipeline_dashboard_backend.query import (
     PanelNotFoundError,
     SourceNotFoundError,
 )
+from pipeline_dashboard_backend.report_io import (
+    DashboardArtifactInspection,
+    DashboardArtifactValidation,
+    DashboardArtifactWriteResult,
+    DashboardReportArtifactReader,
+    DashboardReportArtifactWriter,
+    DashboardReportIOError,
+    DashboardReportValidationError,
+)
 
 __all__ = [
     "__version__",
@@ -86,4 +95,11 @@ __all__ = [
     "DashboardApiBuildRequest",
     "DashboardApiState",
     "create_app",
+    "DashboardArtifactInspection",
+    "DashboardArtifactValidation",
+    "DashboardArtifactWriteResult",
+    "DashboardReportArtifactReader",
+    "DashboardReportArtifactWriter",
+    "DashboardReportIOError",
+    "DashboardReportValidationError",
 ]

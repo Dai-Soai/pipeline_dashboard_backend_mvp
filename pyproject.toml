@@ -31,6 +31,9 @@ dependencies = [
     "uvicorn>=0.30",
 ]
 
+[project.scripts]
+pipeline-dashboard-backend = "pipeline_dashboard_backend.cli:entrypoint"
+
 [project.optional-dependencies]
 dev = [
     "build>=1.2",
