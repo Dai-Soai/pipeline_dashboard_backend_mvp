@@ -91,9 +91,7 @@ def create_app(
 
     application = FastAPI(
         title="Pipeline Dashboard Backend",
-        description=(
-            "Artifact-first runtime observability dashboard API " "for RADAR_SERVICE."
-        ),
+        description=("Artifact-first runtime observability dashboard API for RADAR_SERVICE."),
         version=__version__,
     )
 

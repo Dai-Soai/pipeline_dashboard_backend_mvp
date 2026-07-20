@@ -35,9 +35,7 @@ def test_build_request_serialization(
         generated_at=NOW,
         snapshot_id="snapshot-test",
         continue_on_error=False,
-        require_source_types=frozenset(
-            {DashboardSourceType.METRICS}
-        ),
+        require_source_types=frozenset({DashboardSourceType.METRICS}),
         schema_version="1.0",
     )
 
@@ -243,9 +241,7 @@ def test_builder_validates_required_source_types(
 
     assert result.success is False
     assert result.report.snapshot.overall_status is DashboardStatus.HEALTHY
-    assert result.report.errors == (
-        "required observability source types are missing: health",
-    )
+    assert result.report.errors == ("required observability source types are missing: health",)
 
 
 def test_builder_succeeds_when_required_sources_exist(
@@ -305,9 +301,7 @@ def test_builder_preserves_loader_warning(
     )
 
     assert result.success is True
-    assert result.report.warnings == (
-        "artifact timestamp missing; used file modification time",
-    )
+    assert result.report.warnings == ("artifact timestamp missing; used file modification time",)
 
 
 def test_builder_deduplicates_warnings(
@@ -334,9 +328,7 @@ def test_builder_deduplicates_warnings(
         generated_at=NOW,
     )
 
-    assert result.report.warnings == (
-        "artifact timestamp missing; used file modification time",
-    )
+    assert result.report.warnings == ("artifact timestamp missing; used file modification time",)
 
 
 def test_builder_uses_custom_schema_version(
@@ -375,10 +367,14 @@ def test_build_result_serialization(
         },
     )
 
-    result = DashboardSnapshotBuilder().build_from_paths(
-        [path],
-        generated_at=NOW,
-    ).to_dict()
+    result = (
+        DashboardSnapshotBuilder()
+        .build_from_paths(
+            [path],
+            generated_at=NOW,
+        )
+        .to_dict()
+    )
 
     assert result["success"] is True
     assert result["request"]["artifact_paths"] == [str(path)]

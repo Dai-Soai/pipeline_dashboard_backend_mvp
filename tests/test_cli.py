@@ -12,9 +12,7 @@ def write_metrics_artifact(
         json.dumps(
             {
                 "report_type": "metrics",
-                "generated_at": (
-                    "2026-07-13T17:00:00+00:00"
-                ),
+                "generated_at": ("2026-07-13T17:00:00+00:00"),
                 "status": "healthy",
                 "summary": {
                     "pipeline_count": 4,
@@ -56,16 +54,12 @@ def test_build_command_creates_report(
         ]
     )
 
-    payload = json.loads(
-        capsys.readouterr().out
-    )
+    payload = json.loads(capsys.readouterr().out)
 
     assert exit_code == 0
     assert output_path.exists()
     assert payload["success"] is True
-    assert payload["snapshot_id"] == (
-        "dashboard-cli-test"
-    )
+    assert payload["snapshot_id"] == ("dashboard-cli-test")
 
 
 def test_build_command_returns_two_for_failed_report(
@@ -83,9 +77,7 @@ def test_build_command_returns_two_for_failed_report(
         ]
     )
 
-    payload = json.loads(
-        capsys.readouterr().out
-    )
+    payload = json.loads(capsys.readouterr().out)
 
     assert exit_code == 2
     assert payload["success"] is False
@@ -152,9 +144,7 @@ def test_build_command_requires_source_type(
         ]
     )
 
-    payload = json.loads(
-        capsys.readouterr().out
-    )
+    payload = json.loads(capsys.readouterr().out)
 
     assert exit_code == 2
     assert payload["success"] is False
@@ -211,9 +201,10 @@ def test_build_command_overwrites_output(
     )
 
     assert exit_code == 0
-    assert json.loads(
-        output_path.read_text(encoding="utf-8")
-    )["artifact_type"] == "pipeline_dashboard_report"
+    assert (
+        json.loads(output_path.read_text(encoding="utf-8"))["artifact_type"]
+        == "pipeline_dashboard_report"
+    )
 
     capsys.readouterr()
 
@@ -227,23 +218,22 @@ def test_inspect_command(
 
     write_metrics_artifact(source_path)
 
-    assert main(
-        [
-            "build",
-            str(source_path),
-            "--output",
-            str(output_path),
-        ]
-    ) == 0
+    assert (
+        main(
+            [
+                "build",
+                str(source_path),
+                "--output",
+                str(output_path),
+            ]
+        )
+        == 0
+    )
 
     capsys.readouterr()
 
-    exit_code = main(
-        ["inspect", str(output_path)]
-    )
-    payload = json.loads(
-        capsys.readouterr().out
-    )
+    exit_code = main(["inspect", str(output_path)])
+    payload = json.loads(capsys.readouterr().out)
 
     assert exit_code == 0
     assert payload["checksum_valid"] is True
@@ -259,23 +249,22 @@ def test_validate_command_accepts_valid_report(
 
     write_metrics_artifact(source_path)
 
-    assert main(
-        [
-            "build",
-            str(source_path),
-            "--output",
-            str(output_path),
-        ]
-    ) == 0
+    assert (
+        main(
+            [
+                "build",
+                str(source_path),
+                "--output",
+                str(output_path),
+            ]
+        )
+        == 0
+    )
 
     capsys.readouterr()
 
-    exit_code = main(
-        ["validate", str(output_path)]
-    )
-    payload = json.loads(
-        capsys.readouterr().out
-    )
+    exit_code = main(["validate", str(output_path)])
+    payload = json.loads(capsys.readouterr().out)
 
     assert exit_code == 0
     assert payload["valid"] is True
@@ -290,41 +279,36 @@ def test_validate_command_rejects_tampered_report(
 
     write_metrics_artifact(source_path)
 
-    assert main(
-        [
-            "build",
-            str(source_path),
-            "--output",
-            str(output_path),
-        ]
-    ) == 0
+    assert (
+        main(
+            [
+                "build",
+                str(source_path),
+                "--output",
+                str(output_path),
+            ]
+        )
+        == 0
+    )
 
     capsys.readouterr()
 
-    document = json.loads(
-        output_path.read_text(encoding="utf-8")
-    )
+    document = json.loads(output_path.read_text(encoding="utf-8"))
     document["payload"]["success"] = False
     output_path.write_text(
         json.dumps(document),
         encoding="utf-8",
     )
 
-    exit_code = main(
-        ["validate", str(output_path)]
-    )
-    payload = json.loads(
-        capsys.readouterr().out
-    )
+    exit_code = main(["validate", str(output_path)])
+    payload = json.loads(capsys.readouterr().out)
 
     assert exit_code == 2
     assert payload["valid"] is False
 
 
 def test_serve_command_calls_uvicorn() -> None:
-    with patch(
-        "pipeline_dashboard_backend.cli.uvicorn.run"
-    ) as run:
+    with patch("pipeline_dashboard_backend.cli.uvicorn.run") as run:
         exit_code = main(
             [
                 "serve",
@@ -357,6 +341,4 @@ def test_serve_command_rejects_invalid_port(
     )
 
     assert exit_code == 1
-    assert "between 1 and 65535" in (
-        capsys.readouterr().err
-    )
+    assert "between 1 and 65535" in (capsys.readouterr().err)

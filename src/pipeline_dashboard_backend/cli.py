@@ -26,9 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(
         prog="pipeline-dashboard-backend",
-        description=(
-            "Build, inspect, validate, and serve " "RADAR_SERVICE dashboard reports."
-        ),
+        description=("Build, inspect, validate, and serve RADAR_SERVICE dashboard reports."),
     )
 
     subparsers = parser.add_subparsers(
@@ -49,10 +47,7 @@ def build_parser() -> argparse.ArgumentParser:
         "-o",
         "--output",
         default="reports/dashboard_report.json",
-        help=(
-            "Output dashboard JSON artifact path "
-            "(default: reports/dashboard_report.json)."
-        ),
+        help=("Output dashboard JSON artifact path (default: reports/dashboard_report.json)."),
     )
     build_command.add_argument(
         "--generated-at",
@@ -67,9 +62,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="append",
         choices=[source_type.value for source_type in DashboardSourceType],
         default=[],
-        help=(
-            "Require an observability source type. " "May be supplied multiple times."
-        ),
+        help=("Require an observability source type. May be supplied multiple times."),
     )
     build_command.add_argument(
         "--schema-version",

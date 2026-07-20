@@ -127,23 +127,17 @@ class ObservabilityArtifactLoader:
             raise ArtifactLoadError(f"artifact path is not a file: {artifact_path}")
 
         if artifact_path.suffix.lower() != ".json":
-            raise ArtifactLoadError(
-                f"artifact must use the .json extension: {artifact_path}"
-            )
+            raise ArtifactLoadError(f"artifact must use the .json extension: {artifact_path}")
 
         try:
             raw_bytes = artifact_path.read_bytes()
         except OSError as exc:
-            raise ArtifactLoadError(
-                f"unable to read artifact {artifact_path}: {exc}"
-            ) from exc
+            raise ArtifactLoadError(f"unable to read artifact {artifact_path}: {exc}") from exc
 
         try:
             decoded = raw_bytes.decode("utf-8")
         except UnicodeDecodeError as exc:
-            raise ArtifactValidationError(
-                f"artifact is not valid UTF-8: {artifact_path}"
-            ) from exc
+            raise ArtifactValidationError(f"artifact is not valid UTF-8: {artifact_path}") from exc
 
         try:
             parsed = json.loads(decoded)
@@ -154,9 +148,7 @@ class ObservabilityArtifactLoader:
             ) from exc
 
         if not isinstance(parsed, dict):
-            raise ArtifactValidationError(
-                f"artifact root must be a JSON object: {artifact_path}"
-            )
+            raise ArtifactValidationError(f"artifact root must be a JSON object: {artifact_path}")
 
         payload = self._normalize_payload(parsed)
         resolved_type = source_type or self._detect_source_type(
@@ -242,12 +234,8 @@ class ObservabilityArtifactLoader:
                 f"unable to identify observability artifact type: {path}"
             )
 
-        candidate_values = ", ".join(
-            sorted(candidate.value for candidate in candidates)
-        )
-        raise UnsupportedArtifactError(
-            f"artifact type is ambiguous ({candidate_values}): {path}"
-        )
+        candidate_values = ", ".join(sorted(candidate.value for candidate in candidates))
+        raise UnsupportedArtifactError(f"artifact type is ambiguous ({candidate_values}): {path}")
 
     def _collect_type_candidates(
         self,
@@ -309,8 +297,7 @@ class ObservabilityArtifactLoader:
 
             return (
                 self._file_modified_at(path),
-                f"invalid artifact timestamp {timestamp_value!r}; "
-                "used file modification time",
+                f"invalid artifact timestamp {timestamp_value!r}; used file modification time",
             )
 
         return (
@@ -371,9 +358,7 @@ class ObservabilityArtifactLoader:
         try:
             modified_timestamp = path.stat().st_mtime
         except OSError as exc:
-            raise ArtifactLoadError(
-                f"unable to read artifact metadata {path}: {exc}"
-            ) from exc
+            raise ArtifactLoadError(f"unable to read artifact metadata {path}: {exc}") from exc
 
         return datetime.fromtimestamp(modified_timestamp, tz=UTC)
 
@@ -425,9 +410,7 @@ class ObservabilityArtifactLoader:
             return value
 
         if isinstance(value, Mapping):
-            return {
-                str(key): self._normalize_value(item) for key, item in value.items()
-            }
+            return {str(key): self._normalize_value(item) for key, item in value.items()}
 
         if isinstance(value, (list, tuple)):
             return [self._normalize_value(item) for item in value]

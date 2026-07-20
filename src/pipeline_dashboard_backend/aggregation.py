@@ -120,16 +120,11 @@ class DashboardAggregationEngine:
         """Aggregate loaded artifacts into one dashboard snapshot."""
 
         if not artifacts:
-            raise AggregationError(
-                "at least one loaded artifact is required for aggregation"
-            )
+            raise AggregationError("at least one loaded artifact is required for aggregation")
 
         resolved_generated_at = generated_at or datetime.now(tz=UTC)
 
-        if (
-            resolved_generated_at.tzinfo is None
-            or resolved_generated_at.utcoffset() is None
-        ):
+        if resolved_generated_at.tzinfo is None or resolved_generated_at.utcoffset() is None:
             raise AggregationError("generated_at must be timezone-aware")
 
         self._validate_unique_sources(artifacts)
@@ -192,9 +187,7 @@ class DashboardAggregationEngine:
         source_ids = [artifact.source.source_id for artifact in artifacts]
 
         if len(set(source_ids)) != len(source_ids):
-            raise AggregationError(
-                "loaded artifacts must have unique source IDs"
-            )
+            raise AggregationError("loaded artifacts must have unique source IDs")
 
     def _group_artifacts(
         self,
@@ -208,10 +201,7 @@ class DashboardAggregationEngine:
                 [],
             ).append(artifact)
 
-        return {
-            source_type: tuple(items)
-            for source_type, items in grouped.items()
-        }
+        return {source_type: tuple(items) for source_type, items in grouped.items()}
 
     def _build_source_panel(
         self,
@@ -229,9 +219,7 @@ class DashboardAggregationEngine:
             artifact_status = self._extract_status(artifact.payload)
             statuses.append(artifact_status)
 
-            extracted_metrics, metric_warnings = self._extract_metrics(
-                artifact
-            )
+            extracted_metrics, metric_warnings = self._extract_metrics(artifact)
 
             for metric in extracted_metrics:
                 unique_metric = self._ensure_unique_metric_name(
@@ -254,10 +242,7 @@ class DashboardAggregationEngine:
                 panel_type=panel_type,
                 status=panel_status,
                 metrics=tuple(metrics),
-                source_ids=tuple(
-                    artifact.source.source_id
-                    for artifact in artifacts
-                ),
+                source_ids=tuple(artifact.source.source_id for artifact in artifacts),
                 summary={
                     "artifact_count": len(artifacts),
                     "metric_count": len(metrics),
@@ -290,8 +275,7 @@ class DashboardAggregationEngine:
             for index, item in enumerate(raw_metrics):
                 if not isinstance(item, dict):
                     warnings.append(
-                        f"{artifact.source.source_id}: "
-                        f"metrics[{index}] is not an object"
+                        f"{artifact.source.source_id}: metrics[{index}] is not an object"
                     )
                     continue
 
@@ -470,11 +454,7 @@ class DashboardAggregationEngine:
             return DashboardStatus.UNKNOWN
 
         statuses = [panel.status for panel in panels]
-        known_statuses = [
-            status
-            for status in statuses
-            if status is not DashboardStatus.UNKNOWN
-        ]
+        known_statuses = [status for status in statuses if status is not DashboardStatus.UNKNOWN]
 
         if not known_statuses:
             return DashboardStatus.UNKNOWN
@@ -500,10 +480,7 @@ class DashboardAggregationEngine:
         overall_status: DashboardStatus,
     ) -> DashboardPanel:
         status_counts = {
-            status: sum(
-                panel.status is status
-                for panel in data_panels
-            )
+            status: sum(panel.status is status for panel in data_panels)
             for status in DashboardStatus
         }
 
@@ -546,10 +523,7 @@ class DashboardAggregationEngine:
             panel_type=DashboardPanelType.OVERVIEW,
             status=overall_status,
             metrics=metrics,
-            source_ids=tuple(
-                artifact.source.source_id
-                for artifact in artifacts
-            ),
+            source_ids=tuple(artifact.source.source_id for artifact in artifacts),
             summary={
                 "overall_status": overall_status.value,
                 "artifact_count": len(artifacts),
@@ -564,8 +538,7 @@ class DashboardAggregationEngine:
     ) -> str:
         source_identity = "|".join(
             sorted(
-                f"{artifact.source.source_id}:"
-                f"{artifact.source.checksum_sha256 or ''}"
+                f"{artifact.source.source_id}:{artifact.source.checksum_sha256 or ''}"
                 for artifact in artifacts
             )
         )

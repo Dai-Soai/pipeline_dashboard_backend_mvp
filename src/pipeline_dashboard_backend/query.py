@@ -77,21 +77,15 @@ class DashboardQuerySummary:
             ("metric_count", self.metric_count),
         ):
             if value < 0:
-                raise ValueError(
-                    f"{field_name} must be greater than or equal to zero"
-                )
+                raise ValueError(f"{field_name} must be greater than or equal to zero")
 
         for status, count in self.panel_status_counts.items():
             if count < 0:
-                raise ValueError(
-                    f"panel status count for {status.value!r} must not be negative"
-                )
+                raise ValueError(f"panel status count for {status.value!r} must not be negative")
 
         for panel_type, count in self.panel_type_counts.items():
             if count < 0:
-                raise ValueError(
-                    f"panel type count for {panel_type.value!r} must not be negative"
-                )
+                raise ValueError(f"panel type count for {panel_type.value!r} must not be negative")
 
     def to_dict(self) -> dict[str, JsonValue]:
         """Return a JSON-compatible representation."""
@@ -103,12 +97,10 @@ class DashboardQuerySummary:
             "source_count": self.source_count,
             "metric_count": self.metric_count,
             "panel_status_counts": {
-                status.value: count
-                for status, count in self.panel_status_counts.items()
+                status.value: count for status, count in self.panel_status_counts.items()
             },
             "panel_type_counts": {
-                panel_type.value: count
-                for panel_type, count in self.panel_type_counts.items()
+                panel_type.value: count for panel_type, count in self.panel_type_counts.items()
             },
         }
 
@@ -118,14 +110,8 @@ class DashboardQueryService:
 
     def __init__(self, snapshot: DashboardSnapshot) -> None:
         self._snapshot = snapshot
-        self._panels_by_id = {
-            panel.panel_id: panel
-            for panel in snapshot.panels
-        }
-        self._sources_by_id = {
-            source.source_id: source
-            for source in snapshot.sources
-        }
+        self._panels_by_id = {panel.panel_id: panel for panel in snapshot.panels}
+        self._sources_by_id = {source.source_id: source for source in snapshot.sources}
 
     @property
     def snapshot(self) -> DashboardSnapshot:
@@ -144,9 +130,7 @@ class DashboardQueryService:
         try:
             return self._panels_by_id[normalized_panel_id]
         except KeyError as exc:
-            raise PanelNotFoundError(
-                f"dashboard panel not found: {normalized_panel_id}"
-            ) from exc
+            raise PanelNotFoundError(f"dashboard panel not found: {normalized_panel_id}") from exc
 
     def list_panels(
         self,
@@ -159,18 +143,10 @@ class DashboardQueryService:
         panels = self._snapshot.panels
 
         if panel_type is not None:
-            panels = tuple(
-                panel
-                for panel in panels
-                if panel.panel_type is panel_type
-            )
+            panels = tuple(panel for panel in panels if panel.panel_type is panel_type)
 
         if status is not None:
-            panels = tuple(
-                panel
-                for panel in panels
-                if panel.status is status
-            )
+            panels = tuple(panel for panel in panels if panel.status is status)
 
         return tuple(panels)
 
@@ -225,23 +201,13 @@ class DashboardQueryService:
         )
 
         if not matches:
-            location = (
-                f" in panel {panel_id!r}"
-                if panel_id is not None
-                else ""
-            )
-            raise MetricNotFoundError(
-                f"dashboard metric not found: {normalized_name}{location}"
-            )
+            location = f" in panel {panel_id!r}" if panel_id is not None else ""
+            raise MetricNotFoundError(f"dashboard metric not found: {normalized_name}{location}")
 
         if len(matches) > 1:
-            panel_ids = ", ".join(
-                match.panel_id
-                for match in matches
-            )
+            panel_ids = ", ".join(match.panel_id for match in matches)
             raise DashboardQueryError(
-                f"dashboard metric {normalized_name!r} is ambiguous "
-                f"across panels: {panel_ids}"
+                f"dashboard metric {normalized_name!r} is ambiguous across panels: {panel_ids}"
             )
 
         return matches[0]
@@ -288,14 +254,8 @@ class DashboardQueryService:
         if isinstance(maximum, bool):
             raise TypeError("maximum must be numeric, not bool")
 
-        if (
-            minimum is not None
-            and maximum is not None
-            and minimum > maximum
-        ):
-            raise DashboardQueryError(
-                "minimum must be less than or equal to maximum"
-            )
+        if minimum is not None and maximum is not None and minimum > maximum:
+            raise DashboardQueryError("minimum must be less than or equal to maximum")
 
         normalized_labels = self._normalize_labels(labels)
         panels = self._select_panels(
@@ -311,10 +271,7 @@ class DashboardQueryService:
                 if exact_name is not None and metric.name != exact_name:
                     continue
 
-                if (
-                    name_contains is not None
-                    and name_contains.lower() not in metric.name.lower()
-                ):
+                if name_contains is not None and name_contains.lower() not in metric.name.lower():
                     continue
 
                 if unit is not None and metric.unit != unit:
@@ -348,23 +305,14 @@ class DashboardQueryService:
         """Calculate a high-level summary of the current snapshot."""
 
         panel_status_counts = {
-            status: sum(
-                panel.status is status
-                for panel in self._snapshot.panels
-            )
+            status: sum(panel.status is status for panel in self._snapshot.panels)
             for status in DashboardStatus
         }
         panel_type_counts = {
-            panel_type: sum(
-                panel.panel_type is panel_type
-                for panel in self._snapshot.panels
-            )
+            panel_type: sum(panel.panel_type is panel_type for panel in self._snapshot.panels)
             for panel_type in DashboardPanelType
         }
-        metric_count = sum(
-            len(panel.metrics)
-            for panel in self._snapshot.panels
-        )
+        metric_count = sum(len(panel.metrics) for panel in self._snapshot.panels)
 
         return DashboardQuerySummary(
             snapshot_id=self._snapshot.snapshot_id,
@@ -393,14 +341,8 @@ class DashboardQueryService:
         return tuple(
             panel
             for panel in panels
-            if (
-                panel_type is None
-                or panel.panel_type is panel_type
-            )
-            and (
-                status is None
-                or panel.status is status
-            )
+            if (panel_type is None or panel.panel_type is panel_type)
+            and (status is None or panel.status is status)
         )
 
     def _normalize_labels(
@@ -430,10 +372,7 @@ class DashboardQueryService:
         metric_labels: Mapping[str, str],
         requested_labels: Mapping[str, str],
     ) -> bool:
-        return all(
-            metric_labels.get(key) == value
-            for key, value in requested_labels.items()
-        )
+        return all(metric_labels.get(key) == value for key, value in requested_labels.items())
 
     def _require_non_empty(
         self,
@@ -441,8 +380,6 @@ class DashboardQueryService:
         field_name: str,
     ) -> str:
         if not isinstance(value, str) or not value.strip():
-            raise ValueError(
-                f"{field_name} must be a non-empty string"
-            )
+            raise ValueError(f"{field_name} must be a non-empty string")
 
         return value.strip()

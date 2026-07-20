@@ -95,9 +95,7 @@ def test_load_uses_file_timestamp_when_artifact_timestamp_missing(
     artifact = ObservabilityArtifactLoader().load(artifact_path)
 
     assert artifact.source.collected_at.tzinfo is not None
-    assert artifact.warnings == (
-        "artifact timestamp missing; used file modification time",
-    )
+    assert artifact.warnings == ("artifact timestamp missing; used file modification time",)
 
 
 def test_load_uses_file_timestamp_when_artifact_timestamp_invalid(
@@ -116,7 +114,7 @@ def test_load_uses_file_timestamp_when_artifact_timestamp_invalid(
 
     assert artifact.source.collected_at.tzinfo is not None
     assert artifact.warnings == (
-        "invalid artifact timestamp 'not-a-timestamp'; " "used file modification time",
+        "invalid artifact timestamp 'not-a-timestamp'; used file modification time",
     )
 
 

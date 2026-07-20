@@ -51,21 +51,14 @@ class DashboardBuildRequest:
             raise ValueError("artifact_paths must be unique")
 
         if self.generated_at is not None:
-            if (
-                self.generated_at.tzinfo is None
-                or self.generated_at.utcoffset() is None
-            ):
+            if self.generated_at.tzinfo is None or self.generated_at.utcoffset() is None:
                 raise ValueError("generated_at must be timezone-aware")
 
         if self.snapshot_id is not None and not self.snapshot_id.strip():
-            raise ValueError(
-                "snapshot_id must be non-empty when provided"
-            )
+            raise ValueError("snapshot_id must be non-empty when provided")
 
         if not self.schema_version.strip():
-            raise ValueError(
-                "schema_version must be a non-empty string"
-            )
+            raise ValueError("schema_version must be a non-empty string")
 
     def to_dict(self) -> dict[str, JsonValue]:
         """Return a JSON-compatible representation."""
@@ -79,20 +72,16 @@ class DashboardBuildRequest:
         ]
 
         return {
-            "artifact_paths": [
-                str(path)
-                for path in self.artifact_paths
-            ],
+            "artifact_paths": [str(path) for path in self.artifact_paths],
             "generated_at": (
-                self.generated_at.isoformat()
-                if self.generated_at is not None
-                else None
+                self.generated_at.isoformat() if self.generated_at is not None else None
             ),
             "snapshot_id": self.snapshot_id,
             "continue_on_error": self.continue_on_error,
             "require_source_types": required_source_types,
             "schema_version": self.schema_version,
         }
+
 
 @dataclass(frozen=True, slots=True)
 class DashboardBuildResult:
@@ -104,10 +93,7 @@ class DashboardBuildResult:
     built_at: datetime
 
     def __post_init__(self) -> None:
-        if (
-            self.built_at.tzinfo is None
-            or self.built_at.utcoffset() is None
-        ):
+        if self.built_at.tzinfo is None or self.built_at.utcoffset() is None:
             raise ValueError("built_at must be timezone-aware")
 
     @property
@@ -138,10 +124,7 @@ class DashboardSnapshotBuilder:
         aggregation_engine: DashboardAggregationEngine | None = None,
     ) -> None:
         self._loader = loader or ObservabilityArtifactLoader()
-        self._aggregation_engine = (
-            aggregation_engine
-            or DashboardAggregationEngine()
-        )
+        self._aggregation_engine = aggregation_engine or DashboardAggregationEngine()
 
     def build(
         self,
@@ -157,9 +140,7 @@ class DashboardSnapshotBuilder:
         )
 
         artifacts = load_result.artifacts
-        warnings = self._collect_loader_warnings(
-            artifacts
-        )
+        warnings = self._collect_loader_warnings(artifacts)
         errors = list(load_result.errors)
 
         missing_source_types = self._find_missing_source_types(
@@ -168,23 +149,15 @@ class DashboardSnapshotBuilder:
         )
 
         if missing_source_types:
-            formatted_types = ", ".join(
-                source_type.value
-                for source_type in missing_source_types
-            )
-            errors.append(
-                "required observability source types are missing: "
-                f"{formatted_types}"
-            )
+            formatted_types = ", ".join(source_type.value for source_type in missing_source_types)
+            errors.append(f"required observability source types are missing: {formatted_types}")
 
         if not artifacts:
             report = self._build_empty_report(
                 request=request,
                 generated_at=request.generated_at or built_at,
                 warnings=warnings,
-                errors=errors or [
-                    "no observability artifacts were loaded"
-                ],
+                errors=errors or ["no observability artifacts were loaded"],
             )
 
             return DashboardBuildResult(
@@ -224,18 +197,13 @@ class DashboardSnapshotBuilder:
         generated_at: datetime | None = None,
         snapshot_id: str | None = None,
         continue_on_error: bool = True,
-        require_source_types: frozenset[
-            DashboardSourceType
-        ] = frozenset(),
+        require_source_types: frozenset[DashboardSourceType] = frozenset(),
         schema_version: str = "1.0",
     ) -> DashboardBuildResult:
         """Convenience wrapper for building directly from paths."""
 
         request = DashboardBuildRequest(
-            artifact_paths=tuple(
-                Path(path)
-                for path in paths
-            ),
+            artifact_paths=tuple(Path(path) for path in paths),
             generated_at=generated_at,
             snapshot_id=snapshot_id,
             continue_on_error=continue_on_error,
@@ -259,22 +227,14 @@ class DashboardSnapshotBuilder:
     def _find_missing_source_types(
         self,
         artifacts: Sequence[LoadedArtifact],
-        required_source_types: frozenset[
-            DashboardSourceType
-        ],
+        required_source_types: frozenset[DashboardSourceType],
     ) -> tuple[DashboardSourceType, ...]:
-        available_source_types = {
-            artifact.source.source_type
-            for artifact in artifacts
-        }
+        available_source_types = {artifact.source.source_type for artifact in artifacts}
 
         return tuple(
             source_type
             for source_type in DashboardSourceType
-            if (
-                source_type in required_source_types
-                and source_type not in available_source_types
-            )
+            if (source_type in required_source_types and source_type not in available_source_types)
         )
 
     def _build_empty_report(
@@ -286,10 +246,7 @@ class DashboardSnapshotBuilder:
         errors: Sequence[str],
     ) -> DashboardReport:
         snapshot = DashboardSnapshot(
-            snapshot_id=(
-                request.snapshot_id
-                or "dashboard-empty"
-            ),
+            snapshot_id=(request.snapshot_id or "dashboard-empty"),
             generated_at=generated_at,
             overall_status=DashboardStatus.UNKNOWN,
             panels=(

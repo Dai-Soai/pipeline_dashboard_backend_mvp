@@ -67,10 +67,7 @@ def _serialize_value(value: Any) -> JsonValue:
         return str(value)
 
     if isinstance(value, dict):
-        return {
-            str(key): _serialize_value(item)
-            for key, item in value.items()
-        }
+        return {str(key): _serialize_value(item) for key, item in value.items()}
 
     if isinstance(value, (list, tuple)):
         return [_serialize_value(item) for item in value]
@@ -78,9 +75,7 @@ def _serialize_value(value: Any) -> JsonValue:
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
 
-    raise TypeError(
-        f"Unsupported value for JSON serialization: {type(value).__name__}"
-    )
+    raise TypeError(f"Unsupported value for JSON serialization: {type(value).__name__}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -102,14 +97,10 @@ class DashboardSource:
             checksum = self.checksum_sha256.strip().lower()
 
             if len(checksum) != 64:
-                raise ValueError(
-                    "checksum_sha256 must contain exactly 64 hexadecimal characters"
-                )
+                raise ValueError("checksum_sha256 must contain exactly 64 hexadecimal characters")
 
             if any(character not in "0123456789abcdef" for character in checksum):
-                raise ValueError(
-                    "checksum_sha256 must contain only hexadecimal characters"
-                )
+                raise ValueError("checksum_sha256 must contain only hexadecimal characters")
 
             object.__setattr__(self, "checksum_sha256", checksum)
 
@@ -159,11 +150,7 @@ class DashboardMetric:
             "name": self.name,
             "value": self.value,
             "unit": self.unit,
-            "timestamp": (
-                self.timestamp.isoformat()
-                if self.timestamp is not None
-                else None
-            ),
+            "timestamp": (self.timestamp.isoformat() if self.timestamp is not None else None),
             "labels": dict(self.labels),
         }
 
@@ -241,9 +228,7 @@ class DashboardSnapshot:
 
             if missing_source_ids:
                 missing = ", ".join(sorted(missing_source_ids))
-                raise ValueError(
-                    f"panel {panel.panel_id!r} references unknown sources: {missing}"
-                )
+                raise ValueError(f"panel {panel.panel_id!r} references unknown sources: {missing}")
 
     def to_dict(self) -> dict[str, JsonValue]:
         """Return a JSON-compatible representation."""

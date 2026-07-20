@@ -34,19 +34,12 @@ class DashboardArtifactWriteResult:
 
     def __post_init__(self) -> None:
         if len(self.payload_sha256) != 64:
-            raise ValueError(
-                "payload_sha256 must contain exactly 64 characters"
-            )
+            raise ValueError("payload_sha256 must contain exactly 64 characters")
 
         if self.size_bytes < 0:
-            raise ValueError(
-                "size_bytes must be greater than or equal to zero"
-            )
+            raise ValueError("size_bytes must be greater than or equal to zero")
 
-        if (
-            self.written_at.tzinfo is None
-            or self.written_at.utcoffset() is None
-        ):
+        if self.written_at.tzinfo is None or self.written_at.utcoffset() is None:
             raise ValueError("written_at must be timezone-aware")
 
     def to_dict(self) -> dict[str, JsonValue]:
@@ -87,9 +80,7 @@ class DashboardArtifactInspection:
             "artifact_type": self.artifact_type,
             "artifact_version": self.artifact_version,
             "payload_sha256": self.payload_sha256,
-            "calculated_payload_sha256": (
-                self.calculated_payload_sha256
-            ),
+            "calculated_payload_sha256": (self.calculated_payload_sha256),
             "checksum_valid": self.checksum_valid,
             "build_success": self.build_success,
             "snapshot_id": self.snapshot_id,
@@ -142,19 +133,13 @@ class DashboardReportArtifactWriter:
         path = Path(output_path)
 
         if path.exists() and not overwrite:
-            raise DashboardReportIOError(
-                f"output artifact already exists: {path}"
-            )
+            raise DashboardReportIOError(f"output artifact already exists: {path}")
 
         if path.exists() and not path.is_file():
-            raise DashboardReportIOError(
-                f"output path exists and is not a file: {path}"
-            )
+            raise DashboardReportIOError(f"output path exists and is not a file: {path}")
 
         if path.suffix.lower() != ".json":
-            raise DashboardReportIOError(
-                f"output artifact must use the .json extension: {path}"
-            )
+            raise DashboardReportIOError(f"output artifact must use the .json extension: {path}")
 
         payload = build_result.to_dict()
         payload_sha256 = self._calculate_payload_sha256(payload)
@@ -226,19 +211,14 @@ class DashboardReportArtifactReader:
         artifact_path = Path(path)
 
         if not artifact_path.exists():
-            raise DashboardReportIOError(
-                f"dashboard artifact does not exist: {artifact_path}"
-            )
+            raise DashboardReportIOError(f"dashboard artifact does not exist: {artifact_path}")
 
         if not artifact_path.is_file():
-            raise DashboardReportIOError(
-                f"dashboard artifact path is not a file: {artifact_path}"
-            )
+            raise DashboardReportIOError(f"dashboard artifact path is not a file: {artifact_path}")
 
         if artifact_path.suffix.lower() != ".json":
             raise DashboardReportIOError(
-                "dashboard artifact must use the .json extension: "
-                f"{artifact_path}"
+                f"dashboard artifact must use the .json extension: {artifact_path}"
             )
 
         try:
@@ -296,9 +276,7 @@ class DashboardReportArtifactReader:
             integrity,
             "payload_sha256",
         )
-        calculated_checksum = self._calculate_payload_sha256(
-            payload
-        )
+        calculated_checksum = self._calculate_payload_sha256(payload)
 
         report = payload.get("report")
         snapshot: Mapping[str, JsonValue] = {}
@@ -330,28 +308,12 @@ class DashboardReportArtifactReader:
             artifact_version=artifact_version,
             payload_sha256=payload_sha256,
             calculated_payload_sha256=calculated_checksum,
-            checksum_valid=(
-                payload_sha256 == calculated_checksum
-            ),
-            build_success=self._optional_bool(
-                payload.get("success")
-            ),
-            snapshot_id=self._optional_string(
-                snapshot.get("snapshot_id")
-            ),
-            overall_status=self._optional_string(
-                snapshot.get("overall_status")
-            ),
-            source_count=(
-                len(sources)
-                if isinstance(sources, list)
-                else None
-            ),
-            panel_count=(
-                len(panels)
-                if isinstance(panels, list)
-                else None
-            ),
+            checksum_valid=(payload_sha256 == calculated_checksum),
+            build_success=self._optional_bool(payload.get("success")),
+            snapshot_id=self._optional_string(snapshot.get("snapshot_id")),
+            overall_status=self._optional_string(snapshot.get("overall_status")),
+            source_count=(len(sources) if isinstance(sources, list) else None),
+            panel_count=(len(panels) if isinstance(panels, list) else None),
             warning_count=len(warnings),
             error_count=len(errors),
             size_bytes=artifact_path.stat().st_size,
@@ -378,23 +340,11 @@ class DashboardReportArtifactReader:
                 errors=(str(exc),),
             )
 
-        if (
-            inspection.artifact_type
-            != self.expected_artifact_type
-        ):
-            errors.append(
-                "unsupported artifact type: "
-                f"{inspection.artifact_type}"
-            )
+        if inspection.artifact_type != self.expected_artifact_type:
+            errors.append(f"unsupported artifact type: {inspection.artifact_type}")
 
-        if (
-            inspection.artifact_version
-            not in self.supported_artifact_versions
-        ):
-            errors.append(
-                "unsupported artifact version: "
-                f"{inspection.artifact_version}"
-            )
+        if inspection.artifact_version not in self.supported_artifact_versions:
+            errors.append(f"unsupported artifact version: {inspection.artifact_version}")
 
         checksum_valid = inspection.checksum_valid
 
@@ -402,19 +352,13 @@ class DashboardReportArtifactReader:
             errors.append("dashboard payload checksum mismatch")
 
         if inspection.snapshot_id is None:
-            errors.append(
-                "dashboard snapshot_id is missing"
-            )
+            errors.append("dashboard snapshot_id is missing")
 
         if inspection.overall_status is None:
-            errors.append(
-                "dashboard overall_status is missing"
-            )
+            errors.append("dashboard overall_status is missing")
 
         if inspection.build_success is False:
-            warnings.append(
-                "dashboard build completed with report errors"
-            )
+            warnings.append("dashboard build completed with report errors")
 
         return DashboardArtifactValidation(
             path=artifact_path,
@@ -446,8 +390,7 @@ class DashboardReportArtifactReader:
 
         if not isinstance(value, str) or not value.strip():
             raise DashboardReportValidationError(
-                f"dashboard artifact field {key!r} "
-                "must be a non-empty string"
+                f"dashboard artifact field {key!r} must be a non-empty string"
             )
 
         return value.strip()
@@ -461,8 +404,7 @@ class DashboardReportArtifactReader:
 
         if not isinstance(value, dict):
             raise DashboardReportValidationError(
-                f"dashboard artifact field {key!r} "
-                "must be an object"
+                f"dashboard artifact field {key!r} must be an object"
             )
 
         return value
@@ -489,10 +431,7 @@ class DashboardReportArtifactReader:
         self,
         mapping: Mapping[str, Any],
     ) -> dict[str, JsonValue]:
-        return {
-            str(key): self._normalize_value(value)
-            for key, value in mapping.items()
-        }
+        return {str(key): self._normalize_value(value) for key, value in mapping.items()}
 
     def _normalize_value(
         self,
@@ -508,12 +447,8 @@ class DashboardReportArtifactReader:
             return self._normalize_mapping(value)
 
         if isinstance(value, list):
-            return [
-                self._normalize_value(item)
-                for item in value
-            ]
+            return [self._normalize_value(item) for item in value]
 
         raise DashboardReportValidationError(
-            "dashboard artifact contains unsupported value: "
-            f"{type(value).__name__}"
+            f"dashboard artifact contains unsupported value: {type(value).__name__}"
         )

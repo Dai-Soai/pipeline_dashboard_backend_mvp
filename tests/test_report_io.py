@@ -22,9 +22,7 @@ def write_source_artifact(
         json.dumps(
             {
                 "report_type": "metrics",
-                "generated_at": (
-                    "2026-07-13T17:00:00+00:00"
-                ),
+                "generated_at": ("2026-07-13T17:00:00+00:00"),
                 "status": "healthy",
                 "summary": {
                     "pipeline_count": 5,
@@ -67,12 +65,7 @@ def test_writer_creates_json_artifact(
 def test_writer_creates_parent_directories(
     tmp_path: Path,
 ) -> None:
-    output_path = (
-        tmp_path
-        / "nested"
-        / "reports"
-        / "dashboard.json"
-    )
+    output_path = tmp_path / "nested" / "reports" / "dashboard.json"
 
     DashboardReportArtifactWriter().write(
         make_build_result(tmp_path),
@@ -116,13 +109,9 @@ def test_writer_overwrites_when_enabled(
         overwrite=True,
     )
 
-    payload = json.loads(
-        output_path.read_text(encoding="utf-8")
-    )
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
 
-    assert payload["artifact_type"] == (
-        "pipeline_dashboard_report"
-    )
+    assert payload["artifact_type"] == ("pipeline_dashboard_report")
 
 
 def test_writer_rejects_non_json_extension(
@@ -148,13 +137,9 @@ def test_reader_reads_written_artifact(
         output_path,
     )
 
-    document = DashboardReportArtifactReader().read(
-        output_path
-    )
+    document = DashboardReportArtifactReader().read(output_path)
 
-    assert document["artifact_type"] == (
-        "pipeline_dashboard_report"
-    )
+    assert document["artifact_type"] == ("pipeline_dashboard_report")
     assert document["artifact_version"] == "1.0"
     assert isinstance(document["payload"], dict)
 
@@ -166,9 +151,7 @@ def test_reader_rejects_missing_file(
         DashboardReportIOError,
         match="does not exist",
     ):
-        DashboardReportArtifactReader().read(
-            tmp_path / "missing.json"
-        )
+        DashboardReportArtifactReader().read(tmp_path / "missing.json")
 
 
 def test_reader_rejects_invalid_json(
@@ -197,15 +180,11 @@ def test_inspection_reports_dashboard_metadata(
         output_path,
     )
 
-    inspection = DashboardReportArtifactReader().inspect(
-        output_path
-    )
+    inspection = DashboardReportArtifactReader().inspect(output_path)
 
     assert inspection.checksum_valid is True
     assert inspection.build_success is True
-    assert inspection.snapshot_id == (
-        "dashboard-report-io-test"
-    )
+    assert inspection.snapshot_id == ("dashboard-report-io-test")
     assert inspection.overall_status == "healthy"
     assert inspection.source_count == 1
     assert inspection.panel_count == 2
@@ -222,14 +201,10 @@ def test_inspection_serialization(
         output_path,
     )
 
-    result = DashboardReportArtifactReader().inspect(
-        output_path
-    ).to_dict()
+    result = DashboardReportArtifactReader().inspect(output_path).to_dict()
 
     assert result["checksum_valid"] is True
-    assert result["snapshot_id"] == (
-        "dashboard-report-io-test"
-    )
+    assert result["snapshot_id"] == ("dashboard-report-io-test")
     assert result["size_bytes"] > 0
 
 
@@ -243,9 +218,7 @@ def test_validation_accepts_valid_artifact(
         output_path,
     )
 
-    validation = DashboardReportArtifactReader().validate(
-        output_path
-    )
+    validation = DashboardReportArtifactReader().validate(output_path)
 
     assert validation.valid is True
     assert validation.checksum_valid is True
@@ -262,24 +235,18 @@ def test_validation_detects_payload_tampering(
         output_path,
     )
 
-    document = json.loads(
-        output_path.read_text(encoding="utf-8")
-    )
+    document = json.loads(output_path.read_text(encoding="utf-8"))
     document["payload"]["success"] = False
     output_path.write_text(
         json.dumps(document),
         encoding="utf-8",
     )
 
-    validation = DashboardReportArtifactReader().validate(
-        output_path
-    )
+    validation = DashboardReportArtifactReader().validate(output_path)
 
     assert validation.valid is False
     assert validation.checksum_valid is False
-    assert validation.errors == (
-        "dashboard payload checksum mismatch",
-    )
+    assert validation.errors == ("dashboard payload checksum mismatch",)
 
 
 def test_validation_detects_wrong_artifact_type(
@@ -292,31 +259,23 @@ def test_validation_detects_wrong_artifact_type(
         output_path,
     )
 
-    document = json.loads(
-        output_path.read_text(encoding="utf-8")
-    )
+    document = json.loads(output_path.read_text(encoding="utf-8"))
     document["artifact_type"] = "unknown_report"
     output_path.write_text(
         json.dumps(document),
         encoding="utf-8",
     )
 
-    validation = DashboardReportArtifactReader().validate(
-        output_path
-    )
+    validation = DashboardReportArtifactReader().validate(output_path)
 
     assert validation.valid is False
-    assert "unsupported artifact type" in (
-        validation.errors[0]
-    )
+    assert "unsupported artifact type" in (validation.errors[0])
 
 
 def test_validation_returns_error_for_missing_file(
     tmp_path: Path,
 ) -> None:
-    validation = DashboardReportArtifactReader().validate(
-        tmp_path / "missing.json"
-    )
+    validation = DashboardReportArtifactReader().validate(tmp_path / "missing.json")
 
     assert validation.valid is False
     assert validation.checksum_valid is False
@@ -328,10 +287,14 @@ def test_write_result_serialization(
 ) -> None:
     output_path = tmp_path / "dashboard.json"
 
-    result = DashboardReportArtifactWriter().write(
-        make_build_result(tmp_path),
-        output_path,
-    ).to_dict()
+    result = (
+        DashboardReportArtifactWriter()
+        .write(
+            make_build_result(tmp_path),
+            output_path,
+        )
+        .to_dict()
+    )
 
     assert result["path"] == str(output_path)
     assert result["size_bytes"] > 0

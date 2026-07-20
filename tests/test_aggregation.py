@@ -88,10 +88,14 @@ def test_aggregate_creates_panel_for_each_source_type() -> None:
         ),
     ]
 
-    snapshot = DashboardAggregationEngine().aggregate(
-        artifacts,
-        generated_at=NOW,
-    ).snapshot
+    snapshot = (
+        DashboardAggregationEngine()
+        .aggregate(
+            artifacts,
+            generated_at=NOW,
+        )
+        .snapshot
+    )
 
     assert [panel.panel_type for panel in snapshot.panels] == [
         DashboardPanelType.OVERVIEW,
@@ -118,10 +122,14 @@ def test_aggregate_extracts_nested_summary_metrics() -> None:
         },
     )
 
-    panel = DashboardAggregationEngine().aggregate(
-        [artifact],
-        generated_at=NOW,
-    ).snapshot.panels[1]
+    panel = (
+        DashboardAggregationEngine()
+        .aggregate(
+            [artifact],
+            generated_at=NOW,
+        )
+        .snapshot.panels[1]
+    )
 
     names = {metric.name for metric in panel.metrics}
 
@@ -148,10 +156,14 @@ def test_aggregate_parses_metric_records() -> None:
         },
     )
 
-    panel = DashboardAggregationEngine().aggregate(
-        [artifact],
-        generated_at=NOW,
-    ).snapshot.panels[1]
+    panel = (
+        DashboardAggregationEngine()
+        .aggregate(
+            [artifact],
+            generated_at=NOW,
+        )
+        .snapshot.panels[1]
+    )
 
     metric = panel.metrics[0]
 
@@ -223,10 +235,14 @@ def test_aggregate_normalizes_status(
         {"status": raw_status},
     )
 
-    snapshot = DashboardAggregationEngine().aggregate(
-        [artifact],
-        generated_at=NOW,
-    ).snapshot
+    snapshot = (
+        DashboardAggregationEngine()
+        .aggregate(
+            [artifact],
+            generated_at=NOW,
+        )
+        .snapshot
+    )
 
     assert snapshot.panels[1].status is expected
     assert snapshot.overall_status is expected
@@ -246,10 +262,14 @@ def test_overall_status_uses_worst_panel_status() -> None:
         ),
     ]
 
-    snapshot = DashboardAggregationEngine().aggregate(
-        artifacts,
-        generated_at=NOW,
-    ).snapshot
+    snapshot = (
+        DashboardAggregationEngine()
+        .aggregate(
+            artifacts,
+            generated_at=NOW,
+        )
+        .snapshot
+    )
 
     assert snapshot.overall_status is DashboardStatus.UNHEALTHY
     assert snapshot.panels[0].status is DashboardStatus.UNHEALTHY
@@ -269,10 +289,14 @@ def test_overall_status_ignores_unknown_when_known_status_exists() -> None:
         ),
     ]
 
-    snapshot = DashboardAggregationEngine().aggregate(
-        artifacts,
-        generated_at=NOW,
-    ).snapshot
+    snapshot = (
+        DashboardAggregationEngine()
+        .aggregate(
+            artifacts,
+            generated_at=NOW,
+        )
+        .snapshot
+    )
 
     assert snapshot.overall_status is DashboardStatus.HEALTHY
 
@@ -291,15 +315,16 @@ def test_overview_contains_aggregate_counts() -> None:
         ),
     ]
 
-    overview = DashboardAggregationEngine().aggregate(
-        artifacts,
-        generated_at=NOW,
-    ).snapshot.panels[0]
+    overview = (
+        DashboardAggregationEngine()
+        .aggregate(
+            artifacts,
+            generated_at=NOW,
+        )
+        .snapshot.panels[0]
+    )
 
-    metric_values = {
-        metric.name: metric.value
-        for metric in overview.metrics
-    }
+    metric_values = {metric.name: metric.value for metric in overview.metrics}
 
     assert metric_values["artifact_count"] == 2
     assert metric_values["data_panel_count"] == 2
@@ -319,10 +344,14 @@ def test_duplicate_metric_names_are_namespaced() -> None:
         {"summary": {"count": 2}},
     )
 
-    panel = DashboardAggregationEngine().aggregate(
-        [first, second],
-        generated_at=NOW,
-    ).snapshot.panels[1]
+    panel = (
+        DashboardAggregationEngine()
+        .aggregate(
+            [first, second],
+            generated_at=NOW,
+        )
+        .snapshot.panels[1]
+    )
 
     names = [metric.name for metric in panel.metrics]
 
@@ -360,11 +389,15 @@ def test_explicit_snapshot_id_is_preserved() -> None:
         {"summary": {"events": 5}},
     )
 
-    snapshot = DashboardAggregationEngine().aggregate(
-        [artifact],
-        generated_at=NOW,
-        snapshot_id="snapshot-custom",
-    ).snapshot
+    snapshot = (
+        DashboardAggregationEngine()
+        .aggregate(
+            [artifact],
+            generated_at=NOW,
+            snapshot_id="snapshot-custom",
+        )
+        .snapshot
+    )
 
     assert snapshot.snapshot_id == "snapshot-custom"
 
@@ -415,10 +448,14 @@ def test_aggregation_result_serialization() -> None:
         },
     )
 
-    result = DashboardAggregationEngine().aggregate(
-        [artifact],
-        generated_at=NOW,
-    ).to_dict()
+    result = (
+        DashboardAggregationEngine()
+        .aggregate(
+            [artifact],
+            generated_at=NOW,
+        )
+        .to_dict()
+    )
 
     assert result["snapshot"]["overall_status"] == "healthy"
     assert result["snapshot"]["metadata"]["artifact_count"] == 1

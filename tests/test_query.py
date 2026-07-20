@@ -148,18 +148,14 @@ def test_list_panels_returns_all_panels() -> None:
 
 
 def test_list_panels_filters_by_type() -> None:
-    panels = make_service().list_panels(
-        panel_type=DashboardPanelType.HEALTH
-    )
+    panels = make_service().list_panels(panel_type=DashboardPanelType.HEALTH)
 
     assert len(panels) == 1
     assert panels[0].panel_id == "health"
 
 
 def test_list_panels_filters_by_status() -> None:
-    panels = make_service().list_panels(
-        status=DashboardStatus.DEGRADED
-    )
+    panels = make_service().list_panels(status=DashboardStatus.DEGRADED)
 
     assert [panel.panel_id for panel in panels] == [
         "overview",
@@ -179,9 +175,7 @@ def test_get_source_rejects_missing_source() -> None:
 
 
 def test_list_sources_preserves_requested_order() -> None:
-    sources = make_service().list_sources(
-        source_ids=("health-main", "metrics-main")
-    )
+    sources = make_service().list_sources(source_ids=("health-main", "metrics-main"))
 
     assert [source.source_id for source in sources] == [
         "health-main",
@@ -210,9 +204,7 @@ def test_get_metric_rejects_ambiguous_metric() -> None:
 
 
 def test_find_metrics_filters_by_exact_name() -> None:
-    matches = make_service().find_metrics(
-        exact_name="success_rate"
-    )
+    matches = make_service().find_metrics(exact_name="success_rate")
 
     assert [match.panel_id for match in matches] == [
         "metrics",
@@ -221,9 +213,7 @@ def test_find_metrics_filters_by_exact_name() -> None:
 
 
 def test_find_metrics_filters_by_partial_name_case_insensitive() -> None:
-    matches = make_service().find_metrics(
-        name_contains="LATENCY"
-    )
+    matches = make_service().find_metrics(name_contains="LATENCY")
 
     assert len(matches) == 1
     assert matches[0].metric.name == "average_latency_ms"
@@ -293,9 +283,7 @@ def test_find_metrics_rejects_boolean_bounds() -> None:
 
 
 def test_metric_match_serialization() -> None:
-    result = make_service().get_metric(
-        "average_latency_ms"
-    ).to_dict()
+    result = make_service().get_metric("average_latency_ms").to_dict()
 
     assert result["panel_id"] == "metrics"
     assert result["panel_type"] == "metrics"
